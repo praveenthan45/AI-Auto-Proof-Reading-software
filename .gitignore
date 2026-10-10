@@ -1,0 +1,22 @@
+# Virtual environments
+venv/
+**/venv/
+.venv/
+
+# Python cache
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+# Runtime & temp files
+.dev_browser_opened
+**/.dev_browser_opened
+chaptera-ai/uploads/*
+!chaptera-ai/uploads/.gitkeep
+chaptera-ai/data/*.tmp
+chaptera-ai/data/users.json
+
+# Environment variables
+.env
+*.env

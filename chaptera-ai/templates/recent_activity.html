@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recent Activity - Chaptera</title>
+<script>
+(function () {
+  try {
+    if (localStorage.getItem('chaptera-theme') === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  } catch (e) {}
+})();
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        chaptera: {
+          gold: '#edc108',
+          dark: '#c29a00',
+          cream: '#fff9d8',
+          paper: '#fffef8'
+        }
+      },
+      boxShadow: {
+        soft: '0 14px 40px rgba(0,0,0,0.10)'
+      }
+    }
+  }
+};
+</script>
+<style>
+body{font-family:'Century Gothic','Segoe UI',sans-serif;font-weight:400;}
+html.dark body{background:#0f0e0c;color:#e8e4dc;}
+html.dark header,html.dark aside,html.dark .bg-white{background-color:#1e1b17!important;}
+html.dark .bg-\[\#fffef8\],html.dark .bg-chaptera-paper{background-color:#141210!important;}
+html.dark .bg-chaptera-cream{background-color:#2d270f!important;}
+html.dark .border-yellow-100,html.dark .border-yellow-200{border-color:#3a352c!important;}
+html.dark .text-neutral-950,html.dark .text-black{color:#e8e4dc!important;}
+html.dark .text-neutral-800,html.dark .text-neutral-700,html.dark .text-neutral-600,html.dark .text-neutral-500{color:#b8b0a4!important;}
+html.dark .shadow-soft{box-shadow:0 14px 40px rgba(0,0,0,0.35);}
+</style>
+</head>
+<body class="min-h-screen bg-[#fffef8] text-neutral-950">
+<header class="sticky top-0 z-20 border-b border-yellow-100 bg-white/95 backdrop-blur">
+  <div class="flex items-center justify-between px-5 py-4">
+    <a href="/" class="flex items-center gap-3">
+      <img src="/static/chaptera-logo.png?v={{ asset_v }}" alt="" class="h-9 w-9 object-contain">
+      <div>
+        <div class="text-lg font-bold leading-none">Chaptera</div>
+        <div class="text-xs font-semibold text-neutral-500">Autoproof Read and Editing</div>
+      </div>
+    </a>
+    <div class="flex items-center gap-2">
+      <button type="button" id="themeToggleBtn" class="flex h-9 w-[72px] items-center justify-center gap-2 rounded-full border border-yellow-200 bg-white px-2 text-[10px] font-bold text-neutral-500 transition hover:border-chaptera-gold hover:bg-chaptera-cream" aria-label="Dark mode off" title="Dark mode off" aria-pressed="false">
+        <span class="relative h-5 w-8 rounded-full bg-neutral-300 transition" aria-hidden="true"><span id="themeToggleThumb" class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform"></span></span>
+        <span id="themeToggleLabel" aria-hidden="true">OFF</span>
+      </button>
+      <button type="button" id="pageHeaderLoginBtn" class="flex h-11 w-11 items-center justify-center rounded-full border border-yellow-200 bg-white transition hover:border-chaptera-gold hover:bg-chaptera-cream" aria-label="Login" title="Login">
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/><circle cx="12" cy="12" r="10"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<aside class="fixed bottom-0 left-0 top-[73px] z-10 hidden w-24 border-r border-yellow-100 bg-white md:block">
+  <nav class="flex h-full flex-col items-center py-4 text-center text-[13px] font-semibold">
+    <a href="/" class="flex w-full flex-col items-center gap-2 px-3 py-4 text-neutral-800 transition hover:bg-chaptera-cream hover:text-chaptera-dark" title="Auto Proof Read">
+      <svg class="h-7 w-7 text-chaptera-dark" viewBox="0 0 24 24" fill="currentColor"><path d="M10.6 4.2l1.35 3.65 3.65 1.35-3.65 1.35-1.35 3.65-1.35-3.65L5.6 9.2l3.65-1.35 1.35-3.65z"/><path d="M17.4 12.7l.85 2.3 2.3.85-2.3.85-.85 2.3-.85-2.3-2.3-.85 2.3-.85.85-2.3z"/></svg>
+      <span class="leading-tight">Auto Proof Read</span>
+    </a>
+    <div class="my-2 h-px w-16 bg-yellow-200"></div>
+    <a href="/recent-activity" class="flex w-full flex-col items-center gap-2 bg-chaptera-cream px-3 py-4 text-black shadow-[inset_3px_0_0_#edc108]" title="Recent Activity">
+      <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 8v5l3 2"/><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+      <span class="leading-tight">Recent Activity</span>
+    </a>
+    <a href="/my-projects" class="flex w-full flex-col items-center gap-2 px-3 py-4 text-neutral-800 transition hover:bg-chaptera-cream hover:text-chaptera-dark" title="My Projects">
+      <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      <span class="leading-tight">My Projects</span>
+    </a>
+    <a href="/settings" class="flex w-full flex-col items-center gap-2 px-3 py-4 text-neutral-700 transition hover:bg-chaptera-cream hover:text-chaptera-dark" title="Settings">
+      <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.8 1.8 0 0 0 .36 2l.05.05a2 2 0 0 1-2.83 2.83l-.05-.05a1.8 1.8 0 0 0-2-.36 1.8 1.8 0 0 0-1 1.63V21a2 2 0 0 1-4 0v-.07a1.8 1.8 0 0 0-1-1.63 1.8 1.8 0 0 0-2 .36l-.05.05a2 2 0 0 1-2.83-2.83l.05-.05a1.8 1.8 0 0 0 .36-2 1.8 1.8 0 0 0-1.63-1H3a2 2 0 0 1 0-4h.07a1.8 1.8 0 0 0 1.63-1 1.8 1.8 0 0 0-.36-2l-.05-.05a2 2 0 1 1 2.83-2.83l.05.05a1.8 1.8 0 0 0 2 .36 1.8 1.8 0 0 0 1-1.63V3a2 2 0 0 1 4 0v.07a1.8 1.8 0 0 0 1 1.63 1.8 1.8 0 0 0 2-.36l.05-.05a2 2 0 1 1 2.83 2.83l-.05.05a1.8 1.8 0 0 0-.36 2 1.8 1.8 0 0 0 1.63 1H21a2 2 0 0 1 0 4h-.07a1.8 1.8 0 0 0-1.63 1z"/></svg>
+      <span class="leading-tight">Settings</span>
+    </a>
+    <a href="/help-support" class="flex w-full flex-col items-center gap-2 px-3 py-4 text-neutral-700 transition hover:bg-chaptera-cream hover:text-chaptera-dark" title="Help & Support">
+      <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.2 2.2 0 1 1 3.9 1.4c-.8.7-1.7 1.2-1.7 2.6"/><path d="M12 17h.01"/></svg>
+      <span class="leading-tight">Help & Support</span>
+    </a>
+    <button type="button" id="pageProfileBtn" class="mt-auto flex w-full flex-col items-center gap-2 px-3 py-4 text-chaptera-dark transition hover:bg-chaptera-cream" title="Login to your account">
+      <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-chaptera-dark to-chaptera-gold text-sm font-bold text-white shadow">
+        <span id="pageProfileAvatar">C</span>
+      </span>
+      <span class="leading-tight">Profile</span>
+    </button>
+  </nav>
+</aside>
+
+<div id="pageAuthModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/35 p-4">
+  <div class="w-full max-w-3xl rounded-2xl border border-yellow-100 bg-white p-5 shadow-soft">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="text-xl font-semibold">Author Account</h2>
+      <button type="button" id="pageAuthClose" class="rounded-lg px-3 py-2 text-2xl leading-none text-neutral-500 hover:bg-chaptera-cream">&times;</button>
+    </div>
+    <div class="grid gap-4 md:grid-cols-2">
+      <section class="rounded-xl border border-yellow-100 bg-chaptera-paper p-4">
+        <h3 class="mb-3 text-lg font-semibold">Register</h3>
+        <label class="mb-3 block text-sm text-neutral-600">Name<input type="text" id="pageRegisterName" class="mt-1 w-full rounded-lg border border-yellow-200 bg-white px-3 py-2 outline-none focus:border-chaptera-gold"></label>
+        <label class="mb-3 block text-sm text-neutral-600">Email<input type="email" id="pageRegisterEmail" class="mt-1 w-full rounded-lg border border-yellow-200 bg-white px-3 py-2 outline-none focus:border-chaptera-gold"></label>
+        <label class="mb-4 block text-sm text-neutral-600">Password<input type="password" id="pageRegisterPassword" class="mt-1 w-full rounded-lg border border-yellow-200 bg-white px-3 py-2 outline-none focus:border-chaptera-gold"></label>
+        <button type="button" id="pageRegisterSubmit" class="w-full rounded-xl bg-gradient-to-r from-chaptera-dark to-chaptera-gold px-4 py-2 font-semibold text-white">Register</button>
+      </section>
+      <section class="rounded-xl border border-yellow-100 bg-chaptera-paper p-4">
+        <h3 class="mb-3 text-lg font-semibold">Login</h3>
+        <label class="mb-3 block text-sm text-neutral-600">Email<input type="email" id="pageLoginEmail" class="mt-1 w-full rounded-lg border border-yellow-200 bg-white px-3 py-2 outline-none focus:border-chaptera-gold"></label>
+        <label class="mb-4 block text-sm text-neutral-600">Password<input type="password" id="pageLoginPassword" class="mt-1 w-full rounded-lg border border-yellow-200 bg-white px-3 py-2 outline-none focus:border-chaptera-gold"></label>
+        <button type="button" id="pageLoginSubmit" class="w-full rounded-xl bg-gradient-to-r from-chaptera-dark to-chaptera-gold px-4 py-2 font-semibold text-white">Login</button>
+      </section>
+    </div>
+  </div>
+</div>
+
+<main class="mx-auto max-w-5xl px-5 py-8 md:pl-32">
+  <section class="mb-8 rounded-3xl border border-yellow-100 bg-white p-6 shadow-soft md:p-8">
+    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-chaptera-dark">Chaptera Activity</p>
+    <h1 class="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">Recent Activity</h1>
+    <p class="mt-3 max-w-2xl text-sm leading-6 text-neutral-600">Track proofreading and editing actions generated by Chaptera, including uploads, grammar fixes, spelling checks, readability analysis, and metadata creation.</p>
+  </section>
+
+  <section class="grid gap-4 md:grid-cols-5">
+    <div class="md:col-span-2">
+      <div class="rounded-2xl border border-yellow-100 bg-white p-5 shadow-sm">
+        <h2 class="text-lg font-semibold">Activity Summary</h2>
+        <div id="activitySummary" class="mt-4 grid gap-3"></div>
+      </div>
+    </div>
+    <div class="md:col-span-3">
+      <div class="rounded-2xl border border-yellow-100 bg-white p-5 shadow-sm">
+        <div class="mb-5 flex items-center justify-between">
+          <h2 class="text-lg font-semibold">Timeline</h2>
+          <span class="rounded-full bg-chaptera-cream px-3 py-1 text-xs font-semibold text-chaptera-dark">Saved Activity</span>
+        </div>
+        <div id="activityTimeline" class="relative space-y-4 before:absolute before:bottom-4 before:left-[15px] before:top-4 before:w-px before:bg-yellow-200"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+let activities = [];
+const RECENT_ACTIVITY_MAX_AGE_MS = 3 * 24 * 60 * 60 * 1000;
+const iconMap = { 'Grammar Fixed': 'GF', 'Readability Analysis Generated': 'RA', 'Document Uploaded': 'DU', 'Metadata Generated': 'MG', 'In Progress': 'IP' };
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+async function apiJson(path, body) {
+  const res = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Server error');
+  return data;
+}
+function formatDate(value) {
+  const date = new Date(value || Date.now());
+  return Number.isNaN(date.getTime()) ? 'Just now' : date.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+function syncThemeToggle() {
+  const isDark = document.documentElement.classList.contains('dark');
+  const thumb = document.getElementById('themeToggleThumb');
+  const track = thumb ? thumb.parentElement : null;
+  const label = document.getElementById('themeToggleLabel');
+  const btn = document.getElementById('themeToggleBtn');
+  if (thumb) thumb.style.transform = isDark ? 'translateX(16px)' : 'translateX(0)';
+  if (track) track.style.backgroundColor = isDark ? '#c29a00' : '#d4d4d4';
+  if (label) label.textContent = isDark ? 'ON' : 'OFF';
+  if (btn) {
+    btn.setAttribute('aria-pressed', String(isDark));
+    btn.setAttribute('aria-label', isDark ? 'Dark mode on' : 'Dark mode off');
+    btn.title = isDark ? 'Dark mode on' : 'Dark mode off';
+  }
+}
+document.getElementById('themeToggleBtn')?.addEventListener('click', () => {
+  const nextDark = !document.documentElement.classList.contains('dark');
+  document.documentElement.classList.toggle('dark', nextDark);
+  try { localStorage.setItem('chaptera-theme', nextDark ? 'dark' : 'light'); } catch (e) {}
+  syncThemeToggle();
+});
+function getStoredAuthor() {
+  try { return JSON.parse(localStorage.getItem('chaptera-demo-current-author') || 'null'); } catch (e) { return null; }
+}
+function setStoredAuthor(author) {
+  const clean = {
+    name: (author.name || 'Guest Author').trim() || 'Guest Author',
+    email: (author.email || 'guest@chaptera.local').trim() || 'guest@chaptera.local',
+    token: (author.token || '').trim(),
+  };
+  try { localStorage.setItem('chaptera-demo-current-author', JSON.stringify(clean)); } catch (e) {}
+  syncProfileAvatar();
+  loadRecentActivity();
+}
+function syncProfileAvatar() {
+  const author = getStoredAuthor();
+  const avatar = document.getElementById('pageProfileAvatar');
+  if (avatar) avatar.textContent = (author?.name || author?.email || 'C').slice(0, 1).toUpperCase();
+}
+function showPageAuthModal() {
+  const modal = document.getElementById('pageAuthModal');
+  if (!modal) return;
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+function hidePageAuthModal() {
+  const modal = document.getElementById('pageAuthModal');
+  if (!modal) return;
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
+document.getElementById('pageProfileBtn')?.addEventListener('click', showPageAuthModal);
+document.getElementById('pageHeaderLoginBtn')?.addEventListener('click', () => {
+  showPageAuthModal();
+  document.getElementById('pageLoginEmail')?.focus();
+});
+document.getElementById('pageAuthClose')?.addEventListener('click', hidePageAuthModal);
+document.getElementById('pageAuthModal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'pageAuthModal') hidePageAuthModal();
+});
+document.getElementById('pageRegisterSubmit')?.addEventListener('click', async () => {
+  try {
+    const data = await apiJson('/api/auth/register', {
+      name: document.getElementById('pageRegisterName')?.value || '',
+      email: document.getElementById('pageRegisterEmail')?.value || '',
+      password: document.getElementById('pageRegisterPassword')?.value || '',
+    });
+    setStoredAuthor(data.author);
+    hidePageAuthModal();
+  } catch (e) {
+    alert(e.message || 'Register failed');
+  }
+});
+document.getElementById('pageLoginSubmit')?.addEventListener('click', async () => {
+  try {
+    const data = await apiJson('/api/auth/login', {
+      email: document.getElementById('pageLoginEmail')?.value || '',
+      password: document.getElementById('pageLoginPassword')?.value || '',
+    });
+    setStoredAuthor(data.author);
+    hidePageAuthModal();
+  } catch (e) {
+    alert(e.message || 'Login failed');
+  }
+});
+function projectActivities(project) {
+  const title = project.title || project.filename || 'Untitled manuscript';
+  const list = [];
+  if (project.processing || project.aiJob || project.downloadProcessing || project.downloadJob) {
+    const timestamp = project.updatedAt || project.createdAt;
+    list.push({ type: 'In Progress', count: 1, project: title, detail: project.downloadProcessing || project.downloadJob ? 'Download/export is still in progress.' : 'AI analysis or fixing is still in progress.', timestamp, time: formatDate(timestamp) });
+  }
+  if (project.analyzed) {
+    const timestamp = project.updatedAt || project.completedAt || project.createdAt;
+    list.push({ type: 'Readability Analysis Generated', count: Number(project.issueCount) || 1, project: title, detail: `Analysis saved with ${Number(project.issueCount) || 0} issue(s), ${Number(project.spellingCount) || 0} spelling item(s), and ${Number(project.accuracyPercent) || 0}% accuracy.`, timestamp, time: formatDate(timestamp) });
+  }
+  if (project.fixed) {
+    const timestamp = project.updatedAt || project.completedAt || project.createdAt;
+    list.push({ type: 'Grammar Fixed', count: Number(project.issueCount) || 1, project: title, detail: 'Auto-fix progress was saved for this manuscript.', timestamp, time: formatDate(timestamp) });
+  }
+  if (project.downloaded || project.completedAt) {
+    const timestamp = project.completedAt || project.updatedAt || project.createdAt;
+    list.push({ type: 'Metadata Generated', count: Array.isArray(project.downloads) ? project.downloads.length : 1, project: title, detail: 'Completed manuscript/download metadata is saved under this author.', timestamp, time: formatDate(timestamp) });
+  }
+  if (!list.length) {
+    const timestamp = project.updatedAt || project.createdAt;
+    list.push({ type: 'Document Uploaded', count: 1, project: title, detail: `${project.filename || title} uploaded and saved as a working project.`, timestamp, time: formatDate(timestamp) });
+  }
+  return list;
+}
+function isRecentActivity(item) {
+  const timestamp = Date.parse(item?.timestamp || '');
+  return Number.isFinite(timestamp) && Date.now() - timestamp <= RECENT_ACTIVITY_MAX_AGE_MS;
+}
+async function loadRecentActivity() {
+  const author = getStoredAuthor() || { email: 'guest@chaptera.local', token: '' };
+  try {
+    const data = await apiJson('/api/projects/list', { author_email: author.email, author_token: author.token || '' });
+    const projects = Array.isArray(data.projects) ? data.projects : [];
+    activities = projects
+      .flatMap(projectActivities)
+      .filter(isRecentActivity)
+      .sort((a, b) => Date.parse(b.timestamp || '') - Date.parse(a.timestamp || ''))
+      .slice(0, 30);
+  } catch (e) {
+    activities = [];
+  }
+  renderSummary();
+  renderTimeline();
+}
+function renderSummary() {
+  if (!activities.length) {
+    document.getElementById('activitySummary').innerHTML = '<div class="rounded-xl border border-dashed border-yellow-200 bg-white p-5 text-sm text-neutral-500">No activity from the last 3 days.</div>';
+    return;
+  }
+  document.getElementById('activitySummary').innerHTML = activities.map(item => `
+    <div class="rounded-xl border border-yellow-100 bg-chaptera-paper p-4 transition hover:border-chaptera-gold hover:bg-chaptera-cream">
+      <div class="flex items-center justify-between gap-3">
+        <p class="text-sm font-semibold">${escapeHtml(item.type)}</p>
+        <span class="rounded-full bg-white px-3 py-1 text-xs font-semibold text-chaptera-dark">${item.count}</span>
+      </div>
+      <p class="mt-1 text-xs text-neutral-500">${escapeHtml(item.project)}</p>
+    </div>
+  `).join('');
+}
+function renderTimeline() {
+  if (!activities.length) {
+    document.getElementById('activityTimeline').innerHTML = '<div class="rounded-2xl border border-dashed border-yellow-200 bg-white p-8 text-center text-sm text-neutral-500">Upload, analyze, fix, or download a manuscript to create activity in the last 3 days.</div>';
+    return;
+  }
+  document.getElementById('activityTimeline').innerHTML = activities.map(item => `
+    <article class="relative pl-10">
+      <div class="absolute left-0 top-1 flex h-8 w-8 items-center justify-center rounded-full border-4 border-white bg-gradient-to-br from-chaptera-dark to-chaptera-gold text-[10px] font-semibold text-white shadow">${escapeHtml(iconMap[item.type] || 'AI')}</div>
+      <div class="rounded-2xl border border-yellow-100 bg-chaptera-paper p-5 transition duration-200 hover:-translate-y-1 hover:border-chaptera-gold hover:bg-chaptera-cream hover:shadow-soft">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div><h3 class="text-base font-semibold">${escapeHtml(item.type)}</h3><p class="mt-1 text-sm font-semibold text-neutral-700">${escapeHtml(item.project)}</p></div>
+          <span class="rounded-full bg-white px-3 py-1 text-xs font-semibold text-chaptera-dark">${escapeHtml(item.time)}</span>
+        </div>
+        <p class="mt-3 text-sm leading-6 text-neutral-600">${escapeHtml(item.detail)}</p>
+      </div>
+    </article>
+  `).join('');
+}
+syncThemeToggle();
+syncProfileAvatar();
+loadRecentActivity();
+</script>
+</body>
+</html>

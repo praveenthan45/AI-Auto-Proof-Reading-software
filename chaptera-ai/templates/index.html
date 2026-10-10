@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaptera - Self Publishing Suite</title>
+<link rel="stylesheet" href="/static/studio.css?v={{ asset_v }}">
+<script>
+(function () {
+  try {
+    if (localStorage.getItem('chaptera-theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  } catch (e) {}
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="/static/chaptera-logo.png?v={{ asset_v }}" alt="" class="logo-mark" width="32" height="32" decoding="async">
+    <div class="logo-text-wrap">
+      <span class="logo-text">Chaptera</span>
+      <span class="logo-subtext">Autoproof Read and Editing</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <button type="button" class="theme-toggle" id="themeToggleBtn" aria-pressed="false" aria-label="Dark mode off" title="Dark mode off">
+      <span class="theme-toggle-track" aria-hidden="true">
+        <span class="theme-toggle-thumb"></span>
+      </span>
+      <span class="theme-toggle-text" aria-hidden="true">
+        <span class="theme-toggle-off">OFF</span>
+        <span class="theme-toggle-on">ON</span>
+      </span>
+    </button>
+    <span class="chip" id="accuracyBadge" style="display:none;background:var(--success-light);color:var(--success);">Accuracy: --</span>
+    <div class="header-actions">
+      <div class="header-dropdown header-locale" id="headerLocaleDropdown">
+        <button type="button" class="header-action-btn header-locale-btn" id="headerLocaleBtn" aria-haspopup="menu">
+          <span id="headerLocaleFlag" class="header-locale-flag" aria-hidden="true">🇺🇸</span>
+          <span id="headerLocaleLabel">American English</span>
+          <span class="header-action-chevron" aria-hidden="true"></span>
+        </button>
+        <ul class="header-action-menu" id="headerLocaleMenu" role="menu">
+          <li class="header-action-option header-locale-option selected" role="menuitem" data-locale="en-US">
+            <span class="header-opt-icon header-locale-flag" aria-hidden="true">🇺🇸</span>
+            <span><strong>American English</strong><small>center, truck, elevator</small></span>
+          </li>
+          <li class="header-action-option header-locale-option" role="menuitem" data-locale="en-GB">
+            <span class="header-opt-icon header-locale-flag" aria-hidden="true">🇬🇧</span>
+            <span><strong>British English</strong><small>centre, lorry, lift</small></span>
+          </li>
+        </ul>
+      </div>
+      <div class="header-dropdown header-download" id="downloadDropdown">
+        <button type="button" class="header-action-btn header-dl-btn" id="downloadTrigger" aria-haspopup="menu" aria-label="Download">
+          <span class="download-file-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3.8v11.4" />
+              <path d="M7.2 10.8 12 15.6l4.8-4.8" />
+              <path d="M5 15.7v2.4c0 1.2 1 2.1 2.1 2.1h9.8c1.2 0 2.1-1 2.1-2.1v-2.4" />
+            </svg>
+          </span>
+          <span class="header-action-chevron header-dl-chevron" aria-hidden="true"></span>
+        </button>
+        <ul class="header-action-menu" id="downloadMenu" role="menu">
+          <li class="header-action-option header-dl-option" role="menuitem" data-format="pdf">
+            <span class="header-opt-icon header-opt-icon--svg header-opt-icon--pdf" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5M8 9h4"/></svg>
+            </span>
+            <span><strong>PDF</strong><small>Print layout</small></span>
+          </li>
+          <li class="header-action-option header-dl-option" role="menuitem" data-format="txt">
+            <span class="header-opt-icon header-opt-icon--svg header-opt-icon--txt" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h8M8 9h3"/></svg>
+            </span>
+            <span><strong>TXT</strong><small>Plain text</small></span>
+          </li>
+          <li class="header-action-option header-dl-option" role="menuitem" data-format="word">
+            <span class="header-opt-icon header-opt-icon--svg header-opt-icon--word" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 11h2l1.5 4L13 11h2l-2.5 6.5L14 21h-2l-1-3.5L10 21H8l2.5-6.5L8 11z"/></svg>
+            </span>
+            <span><strong>Word</strong><small>.docx file</small></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div id="toolPreviewPopup" class="tool-preview-popup" hidden aria-hidden="true" role="dialog" aria-labelledby="toolPreviewPopupTitle">
+  <div class="tool-preview-popup-card">
+    <div class="tool-preview-popup-head">
+      <span id="toolPreviewPopupTitle" class="tool-preview-popup-title">Page preview</span>
+      <button type="button" class="tool-preview-popup-close" id="toolPreviewPopupClose" aria-label="Close preview">×</button>
+    </div>
+    <div class="tool-preview-popup-body">
+      <div id="toolPreviewPopupPage" class="tool-preview-popup-page"></div>
+    </div>
+    <div class="tool-preview-popup-foot" id="toolPreviewPopupFoot" hidden>
+      <button type="button" class="tool-preview-popup-btn tool-preview-popup-btn--ghost" id="toolPreviewPopupChoose">Choose image</button>
+      <button type="button" class="tool-preview-popup-btn tool-preview-popup-btn--primary" id="toolPreviewPopupInsert" disabled>Insert</button>
+    </div>
+  </div>
+</div>
+
+<div id="authModal" class="auth-modal" hidden aria-hidden="true" role="dialog" aria-labelledby="authModalTitle">
+  <div class="auth-card">
+    <button type="button" class="auth-close" id="authModalClose" aria-label="Close login">×</button>
+    <div class="auth-grid">
+      <section class="auth-section">
+        <h2 id="authModalTitle">Register</h2>
+        <label>Name<input type="text" id="registerName" autocomplete="name"></label>
+        <label>Email<input type="email" id="registerEmail" autocomplete="email"></label>
+        <label>Password<input type="password" id="registerPassword" autocomplete="new-password"></label>
+        <button type="button" class="auth-submit" id="registerSubmit">Register</button>
+      </section>
+      <section class="auth-section">
+        <h2>Login</h2>
+        <label>Email<input type="email" id="loginEmail" autocomplete="email"></label>
+        <label>Password<input type="password" id="loginPassword" autocomplete="current-password"></label>
+        <button type="button" class="auth-submit" id="loginSubmit">Login</button>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div id="libraryModal" class="library-modal" hidden aria-hidden="true" role="dialog" aria-labelledby="libraryModalTitle">
+  <div class="library-card">
+    <div class="library-head">
+      <div>
+        <h2 id="libraryModalTitle">Library</h2>
+        <p id="libraryModalSub">Saved under the current author.</p>
+      </div>
+      <button type="button" class="library-close" id="libraryModalClose" aria-label="Close library">×</button>
+    </div>
+    <div class="library-body" id="libraryModalBody"></div>
+  </div>
+</div>
+
+<div id="attentionToast" class="attention-toast" role="alert" aria-live="assertive"></div>
+
+<div id="loadingBar" class="loading-bar"></div>
+
+<div id="previewLoadingOverlay" class="preview-loading-overlay" aria-hidden="true">
+  <div class="preview-loading-card">
+    <div class="ai-process-spinner"></div>
+    <p class="preview-loading-text">Updating preview</p>
+  </div>
+</div>
+
+<div id="aiProcessOverlay" class="ai-process-overlay" aria-hidden="true" role="alertdialog" aria-live="polite">
+  <div class="ai-process-card">
+    <div class="ai-process-icon-wrap">
+      <div class="ai-process-spinner" id="aiProcessSpinner"></div>
+      <div class="ai-process-check" id="aiProcessCheck" hidden aria-hidden="true"></div>
+    </div>
+    <div class="ai-process-title" id="aiProcessTitle">Processing</div>
+    <div class="ai-process-page" id="aiProcessPage">Page 1 / 1</div>
+    <div class="ai-process-sub" id="aiProcessSub">Please wait</div>
+    <div class="ai-process-bar"><div class="ai-process-bar-fill" id="aiProcessBarFill"></div></div>
+    <div class="ai-process-actions">
+      <button type="button" class="ai-process-pause-btn" id="aiProcessPauseBtn" hidden>Pause</button>
+      <button type="button" class="ai-process-cancel-btn" id="aiProcessCancelBtn" hidden>Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="app-layout">
+
+  <aside class="settings-panel">
+    <nav class="tool-rail proof-tools-open" aria-label="Book formatting tools">
+
+      <div class="tool-rail-item" data-tool="upload">
+        <button type="button" class="tool-rail-btn" aria-haspopup="true" aria-expanded="false">
+          <span class="tool-rail-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4m0 0l-4 4m4-4l4 4"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+          </span>
+          <span class="tool-rail-label">Upload</span>
+        </button>
+        <div class="tool-flyout" role="region" aria-label="Upload Manuscript">
+          <div class="tool-flyout-header">Upload Manuscript</div>
+          <div class="tool-flyout-body settings-section" id="uploadSection">
+            <div id="uploadPicker" class="upload-picker">
+              <div class="upload-zone" id="uploadZone">
+                <div class="upload-zone-content">
+                  <p><strong>Click or drop file</strong></p>
+                  <p style="margin-top:6px;"><span class="fmt">TXT</span><span class="fmt">DOCX</span><span class="fmt">PDF</span></p>
+                </div>
+                <div id="uploadProcessingOverlay" class="upload-processing-overlay" hidden aria-live="polite">
+                  <div class="upload-processing-spinner" aria-hidden="true"></div>
+                  <p class="upload-processing-text">Processing file…</p>
+                  <p class="upload-processing-name" id="uploadProcessingName"></p>
+                </div>
+              </div>
+              <input type="file" id="manuscriptFile" accept=".txt,.doc,.docx,.pdf,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+            </div>
+            <div id="uploadLoadedNote" class="upload-loaded-note" hidden>
+              <span class="upload-loaded-note-label">PDF loaded</span>
+              <span id="uploadLoadedFileName"></span>
+              <button type="button" class="upload-cancel-btn" id="uploadCancelBtn">Cancel file</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-rail-item" data-tool="layout">
+        <button type="button" class="tool-rail-btn" aria-haspopup="true" aria-expanded="false">
+          <span class="tool-rail-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 3v18M4 9h16M4 15h16"/></svg>
+          </span>
+          <span class="tool-rail-label">Layout</span>
+        </button>
+        <div class="tool-flyout" role="region" aria-label="Page Size and Layout">
+          <div class="tool-flyout-header">Page Size &amp; Layout</div>
+          <div class="tool-flyout-body settings-section">
+            <div class="field-group">
+              <label class="field-label">Book size (PDF uses exact size)</label>
+              <select id="bookSize" class="ui-select">
+                <optgroup label="Global (mm)">
+                  <option value="148x210">148 x 210 mm (A5)</option>
+                  <option value="152x229">152 x 229 mm</option>
+                  <option value="156x234">156 x 234 mm</option>
+                  <option value="170x244">170 x 244 mm</option>
+                  <option value="178x254">178 x 254 mm</option>
+                  <option value="210x297" selected>210 x 297 mm (A4)</option>
+                </optgroup>
+                <optgroup label="Inches">
+                  <option value="5x8">5 x 8 in</option>
+                  <option value="6x9">6 x 9 in (Trade)</option>
+                  <option value="8.5x11">8.5 x 11 in</option>
+                  <option value="5.5x8.5">5.5 x 8.5 in</option>
+                  <option value="7x10">7 x 10 in</option>
+                  <option value="8x8">8 x 8 in</option>
+                  <option value="4x6">4 x 6 in</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">Margin</label>
+                <select id="marginSize" class="ui-select">
+                  <option value="15">15 mm / 0.75 in</option>
+                  <option value="20" selected>20 mm / 1 in</option>
+                  <option value="25">25 mm / 1.25 in</option>
+                  <option value="custom">Custom margin</option>
+                </select>
+                <div id="marginSizeCustomWrap" class="field-custom" hidden>
+                  <input type="number" id="marginSizeCustom" class="ui-input" min="5" max="50" step="1" value="20" placeholder="mm" aria-label="Custom margin in mm">
+                  <span class="field-hint">Margin in mm (5-50)</span>
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Columns</label>
+                <select id="colCount" class="ui-select">
+                  <option value="1" selected>1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="custom">Custom columns</option>
+                </select>
+                <div id="colCountCustomWrap" class="field-custom" hidden>
+                  <input type="number" id="colCountCustom" class="ui-input" min="1" max="6" step="1" value="2" aria-label="Custom column count">
+                  <span class="field-hint">Number of columns (1-6)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-rail-item" data-tool="typography">
+        <button type="button" class="tool-rail-btn" aria-haspopup="true" aria-expanded="false">
+          <span class="tool-rail-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
+          </span>
+          <span class="tool-rail-label">Formatting</span>
+        </button>
+        <div class="tool-flyout" role="region" aria-label="Formatting">
+          <div class="tool-flyout-header">Formatting</div>
+          <div class="tool-flyout-body settings-section">
+            <div class="field-group">
+              <label class="field-label">Body font</label>
+              <select id="bodyFont" class="ui-select"></select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Heading font</label>
+              <select id="headFont" class="ui-select"></select>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">Font size</label>
+                <select id="fontSize" class="ui-select"></select>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Line spacing</label>
+                <select id="lineHeight" class="ui-select">
+                  <option value="1">Single (1.0)</option>
+                  <option value="1.15">1.15</option>
+                  <option value="1.25" selected>1.25</option>
+                  <option value="1.5">1.5</option>
+                  <option value="2">Double (2.0)</option>
+                  <option value="custom">Custom spacing</option>
+                </select>
+                <div id="lineHeightCustomWrap" class="line-height-custom" hidden>
+                  <input type="number" id="lineHeightCustom" class="ui-input" min="0.5" max="4" step="0.05" value="1.6" placeholder="e.g. 1.75" aria-label="Custom line spacing">
+                  <span class="field-hint">Enter spacing value (0.5-4.0)</span>
+                </div>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Text align</label>
+              <select id="textAlign" class="ui-select">
+                <option value="justify" selected>Justify</option>
+                <option value="left">Left</option>
+                <option value="center">Center</option>
+                <option value="right">Right</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-rail-item" data-tool="image">
+        <button type="button" class="tool-rail-btn" aria-haspopup="true" aria-expanded="false">
+          <span class="tool-rail-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </span>
+          <span class="tool-rail-label">Image Insert</span>
+        </button>
+        <div class="tool-flyout" role="region" aria-label="Image Insert">
+          <div class="tool-flyout-header">Image Insert</div>
+          <div class="tool-flyout-body settings-section">
+            <p class="image-insert-hint">Pick a size, then choose an image file to insert into your manuscript.</p>
+            <div class="image-size-options" role="menu">
+              <button type="button" class="image-size-option" data-image-size="quarter" role="menuitem">
+                <span class="image-size-option-label">Quarter size</span>
+                <span class="image-size-option-sub">25% of page width</span>
+              </button>
+              <button type="button" class="image-size-option" data-image-size="half" role="menuitem">
+                <span class="image-size-option-label">Half size</span>
+                <span class="image-size-option-sub">50% of page width</span>
+              </button>
+              <button type="button" class="image-size-option" data-image-size="full" role="menuitem">
+                <span class="image-size-option-label">Full size</span>
+                <span class="image-size-option-sub">Full content width</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="tool-rail-btn tool-rail-btn-ai" id="btnAnalyze" title="Analyze with AI">
+        <span class="tool-rail-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        </span>
+        <span class="tool-rail-label">Analyze</span>
+      </button>
+      <button type="button" class="tool-rail-btn tool-rail-btn-ai tool-rail-btn-fix" id="btnAutoFix" title="Apply AI Auto-Fixes">
+        <span class="tool-rail-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 6L9 17l-5-5"/></svg>
+        </span>
+        <span class="tool-rail-label">Auto Fix</span>
+      </button>
+      <button type="button" class="tool-rail-btn tool-rail-btn-options" id="btnToolOptions" title="Hide tools" aria-expanded="true">
+        <span class="tool-rail-icon tool-rail-arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 8l7 7 7-7"/></svg>
+        </span>
+        <span class="tool-rail-label">Auto Proof Read</span>
+      </button>
+      <div class="tool-rail-divider" aria-hidden="true"></div>
+      <button type="button" class="tool-rail-btn tool-rail-btn-secondary" id="btnRecentActivity" title="Recent Activity">
+        <span class="tool-rail-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 8v5l3 2"/><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+        </span>
+        <span class="tool-rail-label">Recent Activity</span>
+      </button>
+      <button type="button" class="tool-rail-btn tool-rail-btn-secondary" id="btnMyProjects" title="My Projects">
+        <span class="tool-rail-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        </span>
+        <span class="tool-rail-label">My Projects</span>
+      </button>
+      <button type="button" class="tool-rail-btn tool-rail-btn-secondary" id="btnSettings" title="Settings">
+        <span class="tool-rail-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.8 1.8 0 0 0 .36 2l.05.05a2 2 0 0 1-2.83 2.83l-.05-.05a1.8 1.8 0 0 0-2-.36 1.8 1.8 0 0 0-1 1.63V21a2 2 0 0 1-4 0v-.07a1.8 1.8 0 0 0-1-1.63 1.8 1.8 0 0 0-2 .36l-.05.05a2 2 0 0 1-2.83-2.83l.05-.05a1.8 1.8 0 0 0 .36-2 1.8 1.8 0 0 0-1.63-1H3a2 2 0 0 1 0-4h.07a1.8 1.8 0 0 0 1.63-1 1.8 1.8 0 0 0-.36-2l-.05-.05a2 2 0 1 1 2.83-2.83l.05.05a1.8 1.8 0 0 0 2 .36 1.8 1.8 0 0 0 1-1.63V3a2 2 0 0 1 4 0v.07a1.8 1.8 0 0 0 1 1.63 1.8 1.8 0 0 0 2-.36l.05-.05a2 2 0 1 1 2.83 2.83l-.05.05a1.8 1.8 0 0 0-.36 2 1.8 1.8 0 0 0 1.63 1H21a2 2 0 0 1 0 4h-.07a1.8 1.8 0 0 0-1.63 1z"/></svg>
+        </span>
+        <span class="tool-rail-label">Settings</span>
+      </button>
+      <button type="button" class="tool-rail-btn tool-rail-btn-secondary" id="btnHelpSupport" title="Help & Support">
+        <span class="tool-rail-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.2 2.2 0 1 1 3.9 1.4c-.8.7-1.7 1.2-1.7 2.6"/><path d="M12 17h.01"/></svg>
+        </span>
+        <span class="tool-rail-label">Help & Support</span>
+      </button>
+      <button type="button" class="tool-rail-btn tool-rail-btn-profile" id="btnLogin" title="Login to your account">
+        <span class="tool-rail-icon" aria-hidden="true">
+          <span class="profile-avatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/><circle cx="12" cy="12" r="10"/></svg>
+          </span>
+        </span>
+        <span class="tool-rail-label">Profile</span>
+      </button>
+
+    </nav>
+
+    <textarea id="sampleText" hidden aria-hidden="true"></textarea>
+    <input type="file" id="imageInsertFile" accept="image/png,image/jpeg,image/gif,image/webp,.png,.jpg,.jpeg,.gif,.webp" hidden aria-hidden="true">
+  </aside>
+
+  <main class="preview-area">
+    <div class="preview-scroll">
+      <div class="preview-fit" id="previewFit">
+        <div id="bookPages" class="book-pages-stack is-empty-preview">
+          <div class="landing-upload-state" id="landingUploadDropzone" role="button" tabindex="0" aria-label="Upload manuscript">
+            <div style="font-size:2.5rem;margin-bottom:12px;opacity:0.5;">📖</div>
+            <p class="landing-upload-title">Upload Manuscript</p>
+            <p class="landing-upload-sub">TXT, DOCX, or PDF</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="preview-bottom-bar">
+      <div class="preview-meta-left">
+        <span id="previewSizeLabel"><strong>210 x 297 mm</strong></span>
+        <span class="preview-legend"><span class="preview-legend-error">Red = error</span> <span class="preview-legend-sep"></span> <span class="preview-legend-fixed">Green = auto-fixed</span></span>
+      </div>
+      <div class="preview-toolbar preview-toolbar--bottom" aria-label="Preview controls">
+        <div class="preview-nav">
+          <button type="button" class="preview-nav-btn preview-nav-btn--symbol" id="previewPrevBtn" aria-label="Previous page" title="Previous page">‹</button>
+          <div class="preview-page-goto">
+            <span class="preview-page-label">Page</span>
+            <input type="number" id="previewPageJumpInput" class="preview-page-goto-input" min="1" inputmode="numeric" aria-label="Page number">
+            <span id="previewPageCount" class="preview-page-count">/ 1</span>
+          </div>
+          <button type="button" class="preview-nav-btn preview-nav-btn--symbol" id="previewNextBtn" aria-label="Next page" title="Next page">›</button>
+        </div>
+        <div class="preview-zoom" aria-label="Preview zoom">
+          <button type="button" class="preview-nav-btn preview-zoom-btn" id="previewZoomOutBtn" aria-label="Zoom out" title="Zoom out">−</button>
+          <span id="previewZoomLabel" class="preview-zoom-label">100%</span>
+          <button type="button" class="preview-nav-btn preview-zoom-btn" id="previewZoomInBtn" aria-label="Zoom in" title="Zoom in">+</button>
+          <button type="button" class="preview-nav-btn preview-zoom-reset" id="previewZoomResetBtn" title="Reset to fit view">Fit</button>
+        </div>
+        <button type="button" class="preview-confirm-btn" id="previewConfirmBtn" disabled>Save &amp; Confirm</button>
+      </div>
+    </div>
+    <div class="status-bar">
+      <span><span class="status-dot" id="statusDot"></span> <span id="statusText">New manuscript</span></span>
+      <span id="pageDimInfo">Page size</span>
+    </div>
+    <div class="dl-overlay" id="dlOverlay">
+      <strong>Generating</strong>
+      <div class="dl-bar"><div class="dl-fill" id="dlProgressFill" style="width:0%"></div></div>
+      <span id="dlText">Please wait</span>
+    </div>
+  </main>
+
+  <aside class="changes-panel">
+    <div class="changes-header">
+      <h3>AI Analysis & Spelling</h3>
+      <p>Grammar  spelling  duplicates  readability  characters</p>
+      <div class="changes-stats">
+        <div class="stat-pill"><div class="stat-pill-val" id="accPercent"></div><div class="stat-pill-label">Accuracy</div></div>
+        <div class="stat-pill"><div class="stat-pill-val" id="readScore"></div><div class="stat-pill-label">Readability</div></div>
+        <div class="stat-pill"><div class="stat-pill-val" id="aiIssueCount">0</div><div class="stat-pill-label">Issues</div></div>
+        <div class="stat-pill stat-spelling-count" title="Hover or click mistakes below to locate on page"><div class="stat-pill-val" id="changeCount">0</div><div class="stat-pill-label">Spelling</div></div>
+      </div>
+    </div>
+    <div class="changes-list" id="changesList">
+      <p style="font-size:0.8rem;color:var(--muted);padding:12px;text-align:center;">Upload your manuscript to begin.</p>
+    </div>
+  </aside>
+</div>
+
+<script src="/static/fonts-catalog.js?v={{ asset_v }}"></script>
+<script src="/static/studio.js?v={{ asset_v }}"></script>
+{% if dev_mode %}
+<script>
+(function () {
+  var lastToken = null;
+  function waitForServer(tries, done) {
+    if (tries <= 0) return done(false);
+    fetch('/api/health')
+      .then(function (r) { return r.ok ? done(true) : waitForServer(tries - 1, done); })
+      .catch(function () { setTimeout(function () { waitForServer(tries - 1, done); }, 400); });
+  }
+  setInterval(function () {
+    fetch('/api/dev/reload-check')
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (lastToken !== null && d.token !== lastToken) {
+          waitForServer(30, function (ok) {
+            if (ok) window.location.reload();
+          });
+        }
+        lastToken = d.token;
+      })
+      .catch(function () {});
+  }, 1200);
+})();
+</script>
+{% endif %}
+</body>
+</html>

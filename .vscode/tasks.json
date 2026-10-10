@@ -1,0 +1,33 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Chaptera: Dev Server",
+      "type": "shell",
+      "command": "cmd",
+      "args": ["/c", "dev.bat"],
+      "options": {
+        "cwd": "${workspaceFolder}/chaptera-ai"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "chaptera",
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Chaptera DEV",
+          "endsPattern": "Running on"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
